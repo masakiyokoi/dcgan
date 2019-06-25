@@ -5,12 +5,13 @@ import os
 import chainer
 from chainer import training
 from chainer.training import extensions
+from chainercv.datasets import DirectoryParsingLabelDataset
 
 from net import Discriminator
 from net import Generator
 from updater import DCGANUpdater
 from visualize import out_generated_image
-
+from change import tuple2array
 
 def main():
     parser = argparse.ArgumentParser(description='Chainer example: DCGAN')
@@ -20,7 +21,7 @@ def main():
                         help='Number of sweeps over the dataset to train')
     parser.add_argument('--gpu', '-g', type=int, default=0,
                         help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--dataset', '-i', default='/home/syab/32_resize_good_condition/MYSV',
+    parser.add_argument('--dataset', '-i', default='/home/syab/32_resize_good_condition/',
                         help='Directory of image files.  Default is cifar-10.')
     parser.add_argument('--out', '-o', default='result',
                         help='Directory to output the result')
@@ -67,13 +68,18 @@ def main():
         # Load the CIFAR10 dataset if args.dataset is not specified
         train, _ = chainer.datasets.get_cifar10(withlabel=False, scale=255.)
     else:
+        '''
         all_files = os.listdir(args.dataset)
         image_files = [f for f in all_files if ('png' in f or 'jpg' in f)]
         print('{} contains {} image files'
               .format(args.dataset, len(image_files)))
         train = chainer.datasets\
             .ImageDataset(paths=image_files, root=args.dataset)
+        '''
+        train = tuple2array('/home/syab/32_resize_good_condition/')
+        
 
+        print(len(train))
     # Setup an iterator
     train_iter = chainer.iterators.SerialIterator(train, args.batchsize)
 
